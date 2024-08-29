@@ -10,7 +10,6 @@
 
   <script>
     function showPassword() {
-
       const passwordInput = document.querySelector('#passwordLogin');
       const passwordIcon = document.querySelector('#passwordIcon');
       
@@ -79,7 +78,6 @@
       </div>
     </div>
   </body>
-
   <%- include('layout/script') %>
 
   <script>
@@ -163,6 +161,8 @@
 
     page.initializeEventControl = () => {
       page.elements.btnLogin.on('click', () => {
+
+      console.log('davaoday');
         page.commands.login();
       });
     };
@@ -172,4 +172,5 @@
       page.initializeEventControl();
     });
   </script>
-</html>
+
+  </html>
