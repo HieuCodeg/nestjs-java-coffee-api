@@ -1,12 +1,11 @@
 // services/location-region.service.ts
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILocationRegionService } from './location-region.interface';
 import { LocationRegion } from 'src/models/entities/location.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class LocationRegionService implements ILocationRegionService {
+export class LocationRegionService {
   constructor(
     @InjectRepository(LocationRegion)
     private readonly locationRegionRepository: Repository<LocationRegion>,

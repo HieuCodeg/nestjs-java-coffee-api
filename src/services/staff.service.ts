@@ -9,13 +9,12 @@ import { StaffAvatar } from 'src/models/entities/staffAvatar.entity';
 import { User } from 'src/models/entities/user.entity';
 import { EnumFileType } from 'src/models/enums/enumFileType';
 import { StaffRepository } from 'src/repositories/staff.repository';
-import { LocationRegionService } from '../locationRegion/location-region.service';
-import { StaffAvatarService } from '../staffAvatar/staff-avatar.service';
-import { UploadServiceImpl } from '../upload/upload.service';
-import { UserService } from '../user/user.service';
-import { IStaffService } from './staff.interface';
+import { LocationRegionService } from './location-region.service';
+import { StaffAvatarService } from './staff-avatar.service';
+import { UserService } from './user.service';
+import { UploadServiceImpl } from './upload.service';
 @Injectable()
-export class StaffServiceImpl implements IStaffService {
+export class StaffServiceImpl {
   private readonly DEFAULT_USER_IMAGE_ID = 'default_user_image';
 
   constructor(

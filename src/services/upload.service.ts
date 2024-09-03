@@ -5,10 +5,9 @@ import {
   UploadApiErrorResponse,
   UploadApiResponse,
 } from 'cloudinary';
-import { IUploadService } from './upload.interface';
 
 @Injectable()
-export class UploadServiceImpl implements IUploadService {
+export class UploadServiceImpl {
   constructor(
     @Inject('Cloudinary')
     private readonly cloudinaryInstance: typeof cloudinary,

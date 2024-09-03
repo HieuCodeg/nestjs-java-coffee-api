@@ -2,8 +2,8 @@ import { Controller, Get, Render, Param } from '@nestjs/common';
 import { AppUtils } from 'src/common/app.untils';
 import { StaffDTO } from 'src/models/DTO/staff/staff.dto';
 import { User } from 'src/models/entities/user.entity';
-import { StaffServiceImpl } from 'src/services/staff/staff.service';
-import { UserService } from 'src/services/user/user.service';
+import { StaffServiceImpl } from 'src/services/staff.service';
+import { UserService } from 'src/services/user.service';
 
 @Controller('/cp')
 export class CPController {
