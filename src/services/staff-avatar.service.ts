@@ -1,12 +1,11 @@
 // services/staff-avatar.service.ts
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IStaffAvatarService } from './staff-avatar.interface';
 import { StaffAvatar } from 'src/models/entities/staffAvatar.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class StaffAvatarService implements IStaffAvatarService {
+export class StaffAvatarService {
   constructor(
     @InjectRepository(StaffAvatar)
     private readonly staffAvatarRepository: Repository<StaffAvatar>,

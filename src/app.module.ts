@@ -1,23 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { dataSourceOption } from 'db/data-source';
+import { AppController } from './app.controller';
 import { HomeController } from './controllers/web/home.controller';
 import { CloudinaryModule } from './modules/cloudinary.module';
-import { AdminModule } from './modules/admin.module';
-import { StaffModule } from './modules/staff.module';
-import { UserModule } from './modules/user.module';
+import { ControllerModule } from './modules/controller.module';
+import { UntilModule } from './modules/until.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOption),
     CloudinaryModule,
-    StaffModule,
-    UserModule,
-    AdminModule,
+    UntilModule,
+    ControllerModule,
   ],
   controllers: [AppController, HomeController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
