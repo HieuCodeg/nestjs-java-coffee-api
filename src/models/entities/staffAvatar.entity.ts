@@ -6,19 +6,19 @@ export class StaffAvatar {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'file_name' })
+  @Column({ name: 'file_name', nullable: true })
   fileName: string;
 
-  @Column({ name: 'file_folder' })
+  @Column({ name: 'file_folder', nullable: true })
   fileFolder: string;
 
-  @Column({ name: 'file_url' })
+  @Column({ name: 'file_url', nullable: true })
   fileUrl: string;
 
-  @Column({ name: 'file_type' })
+  @Column({ name: 'file_type', nullable: true })
   fileType: string;
 
-  @Column({ name: 'cloud_id' })
+  @Column({ name: 'cloud_id', nullable: true })
   cloudId: string;
 
   @Column({ type: 'bigint', default: () => '0' })

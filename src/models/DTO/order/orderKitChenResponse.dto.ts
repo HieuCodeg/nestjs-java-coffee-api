@@ -1,8 +1,9 @@
 import { IsArray, IsNumber, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { OrderItemKitchenDTO } from '../orderItem/orderItemKitchen.dto';
 
 export class OrderKitChenResponseDTO {
+  @Expose()
   @IsArray({ message: 'Order ID change list phải là một mảng.' })
   @IsNumber(
     {},
@@ -13,6 +14,7 @@ export class OrderKitChenResponseDTO {
   )
   orderIdChangeList: number[];
 
+  @Expose()
   @IsArray({ message: 'Order item response list phải là một mảng.' })
   @ValidateNested({ each: true })
   @Type(() => OrderItemKitchenDTO)

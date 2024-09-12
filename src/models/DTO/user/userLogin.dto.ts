@@ -1,14 +1,18 @@
+import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsEmail, IsOptional, IsString } from 'class-validator';
 import { User } from 'src/models/entities/user.entity';
 
 export class UserLoginDTO {
+  @Expose()
   @IsOptional()
   id?: number;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập email.' })
   @IsEmail({}, { message: 'Email không đúng định dạng.' })
   username: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập mật khẩu.' })
   @IsString()
   password?: string;

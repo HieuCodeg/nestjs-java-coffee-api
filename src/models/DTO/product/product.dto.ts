@@ -5,7 +5,7 @@ import {
   IsNotEmpty,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { Product } from 'src/models/entities/product.entity';
 import { SizeDTO } from './size.dto';
 import { CategoryDTO } from '../category/category.dto';
@@ -13,31 +13,38 @@ import { ProductImageDTO } from '../productImage/productImage.dto';
 import { JsonToMapConverter } from 'src/common/json.to.map';
 
 export class ProductDTO {
+  @Expose()
   @IsOptional()
   id?: number;
 
+  @Expose()
   @IsNotEmpty()
   @IsString()
   title: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   summary?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   description?: string;
 
+  @Expose()
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => SizeDTO)
   sizes?: Map<string, SizeDTO>;
 
+  @Expose()
   @IsOptional()
   @ValidateNested()
   @Type(() => CategoryDTO)
   category?: CategoryDTO;
 
+  @Expose()
   @IsOptional()
   @ValidateNested()
   @Type(() => ProductImageDTO)

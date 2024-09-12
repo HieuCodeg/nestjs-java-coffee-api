@@ -1,10 +1,15 @@
+import { Expose } from 'class-transformer';
 import { CTable } from 'src/models/entities/cTable.entity';
 import { EnumTableStatus } from 'src/models/enums/enumTableStatus';
 
 export class TableDTO {
+  @Expose()
   id?: number;
+  @Expose()
   name: string;
+  @Expose()
   status: EnumTableStatus;
+  @Expose()
   statusValue: string;
 
   constructor(id?: number, name?: string, status?: EnumTableStatus) {

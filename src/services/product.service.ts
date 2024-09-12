@@ -7,18 +7,19 @@ import { ProductCreateDTO } from 'src/models/DTO/product/productCreate.dto';
 import { Product } from 'src/models/entities/product.entity';
 import { ProductImage } from 'src/models/entities/productImage.entity';
 import { EnumFileType } from 'src/models/enums/enumFileType';
-import { ProductRepository } from 'src/repositories/product.repository';
+import { Repository } from 'typeorm';
 import { CategoryServiceImpl } from './category.service';
-import { UploadServiceImpl } from './upload.service';
 import { ProductImageService } from './product-image.service';
+import { UploadServiceImpl } from './upload.service';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ProductService {
   private readonly DEFAULT_PRODUCT_IMAGE_ID = 'default-product-image';
 
   constructor(
-    @InjectRepository(ProductRepository)
-    private readonly productRepository: ProductRepository,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
 
     private readonly categoryService: CategoryServiceImpl,
     private readonly productImageService: ProductImageService,
@@ -26,18 +27,41 @@ export class ProductService {
     private readonly cloudinaryUploadUtil: CloudinaryUploadUtil,
   ) {}
 
-  //   async findAll(): Promise<Product[]> {
-  //     return this.productRepository.getAllProductDTOWhereDeletedIsFalse();
-  //   }
-
   async getAllProductDTOWhereDeletedIsFalse(): Promise<ProductDTO[]> {
-    return this.productRepository.getAllProductDTOWhereDeletedIsFalse();
+    const products = await this.productRepository.find({
+      where: { deleted: false },
+      relations: ['category', 'productImage'],
+    });
+    return products.map((product) => {
+      // Chuyển đổi entity thành DTO, chỉ giữ lại các trường được định nghĩa trong DTO
+      const productDTO = plainToInstance(ProductDTO, product, {
+        excludeExtraneousValues: true, // Chỉ giữ lại các trường được định nghĩa trong DTO
+      });
+      // Kiểm tra và parse sizes nếu cần
+      if (typeof product.sizes === 'string') {
+        productDTO.sizes = JSON.parse(product.sizes);
+      } else {
+        productDTO.sizes = product.sizes;
+      }
+      return productDTO;
+    });
   }
 
   async getAllProductCashierDTOWhereDeletedIsFalse(): Promise<
     ProductCashierDTO[]
   > {
-    return this.productRepository.getAllProductCashierDTOWhereDeletedIsFalse();
+    return this.productRepository
+      .createQueryBuilder('pd')
+      .select([
+        'pd.id',
+        'pd.title',
+        'pd.description',
+        'pd.sizes',
+        'pd.category.id',
+        'pd.productImage.fileUrl',
+      ])
+      .where('pd.deleted = :deleted', { deleted: false })
+      .getRawMany();
   }
 
   async getById(id: number): Promise<Product> {
@@ -49,14 +73,23 @@ export class ProductService {
   }
 
   async existsByTitle(title: string): Promise<boolean> {
-    return await this.productRepository.existsByTitle(title);
+    const count = await this.productRepository
+      .createQueryBuilder('pd')
+      .where('pd.title = :title', { title })
+      .getCount();
+    return count > 0;
   }
 
   async existsByProductNameAndIdNot(
     title: string,
     id: number,
   ): Promise<boolean> {
-    return await this.productRepository.existsByTitleAndIdNot(title, id);
+    const count = await this.productRepository
+      .createQueryBuilder('pd')
+      .where('pd.title = :title', { title })
+      .andWhere('pd.id != :id', { id })
+      .getCount();
+    return count > 0;
   }
 
   async createWithImage(
@@ -71,6 +104,7 @@ export class ProductService {
     const fileType = file.mimetype.substring(0, 5);
     let productImage = new ProductImage();
     productImage.fileType = fileType;
+
     productImage = await this.productImageService.save(productImage);
 
     if (fileType === EnumFileType.IMAGE) {
@@ -145,6 +179,8 @@ export class ProductService {
 
       return this.productImageService.save(productImage);
     } catch (error) {
+      console.log('er', error);
+
       throw new Error('Upload hình ảnh thất bại.');
     }
   }

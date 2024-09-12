@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   IsNotEmpty,
   Length,
@@ -6,10 +7,12 @@ import {
 } from 'class-validator';
 
 export class SizeDTO {
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập tên size.' })
   @Length(1, 5, { message: 'Tên size có độ dài nằm trong khoảng 1-5 ký tự.' })
   name: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Giá sản phẩm không được để trống.' })
   @IsNumberString({}, { message: 'Giá sản phẩm phải là số.' })
   @ValidateIf((o) => o.price.length > 0)

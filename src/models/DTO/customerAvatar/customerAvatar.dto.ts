@@ -1,14 +1,23 @@
 import { CustomerAvatar } from 'src/models/entities/customerAvatar.entity';
 import { CustomerDTO } from '../customer/customer.dto';
+import { Expose } from 'class-transformer';
 
 export class CustomerAvatarDTO {
+  @Expose()
   id: string;
+  @Expose()
   fileName: string;
+  @Expose()
   fileFolder: string;
+  @Expose()
   fileUrl: string;
+  @Expose()
   fileType: string;
+  @Expose()
   cloudId: string;
+  @Expose()
   ts: number;
+  @Expose()
   customer: CustomerDTO;
 
   constructor(partial: Partial<CustomerAvatarDTO>) {

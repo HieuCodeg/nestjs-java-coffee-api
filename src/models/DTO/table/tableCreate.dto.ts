@@ -1,10 +1,13 @@
+import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { CTable } from 'src/models/entities/cTable.entity';
 import { EnumTableStatus } from 'src/models/enums/enumTableStatus';
 
 export class TableCreateDTO {
+  @Expose()
   id: number;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập tên bàn.' })
   @IsString()
   @Length(4, 20, {

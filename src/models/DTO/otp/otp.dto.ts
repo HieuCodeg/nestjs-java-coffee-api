@@ -2,15 +2,19 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Otp } from 'src/models/entities/otp.entity';
 import { UserDTO } from '../user/user.dto';
+import { Expose } from 'class-transformer';
 
 export class OtpDTO {
+  @Expose()
   @IsOptional()
   id?: number;
 
+  @Expose()
   @IsNotEmpty()
   @IsString()
   code: string;
 
+  @Expose()
   @IsOptional()
   user?: UserDTO;
 

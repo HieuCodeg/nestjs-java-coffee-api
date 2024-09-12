@@ -29,15 +29,15 @@ export class LocationRegion extends BaseEntity {
   address: string;
 
   toLocationRegionDTO(): LocationRegionDTO {
-    return new LocationRegionDTO({
-      id: this.id,
-      provinceId: this.provinceId,
-      provinceName: this.provinceName,
-      districtId: this.districtId,
-      districtName: this.districtName,
-      wardId: this.wardId,
-      wardName: this.wardName,
-      address: this.address,
-    });
+    const locationRegionDTO = new LocationRegionDTO();
+    locationRegionDTO.id = this.id;
+    locationRegionDTO.provinceId = this.provinceId;
+    locationRegionDTO.provinceName = this.provinceName;
+    locationRegionDTO.districtId = this.districtId;
+    locationRegionDTO.districtName = this.districtName;
+    locationRegionDTO.wardId = this.wardId;
+    locationRegionDTO.wardName = this.wardName;
+    locationRegionDTO.address = this.address;
+    return locationRegionDTO;
   }
 }

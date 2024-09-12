@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="be-navbar-header">
             <a class="navbar-brand" href="/cp">
-                <img style="width: 130px;" src="/img/logo-2.png" alt="">
+                <img style="width: 130px;" src="/images/logo-2.png" alt="">
             </a>
         </div>
         <div class="page-title"><span>Trang chủ</span></div>
@@ -10,18 +10,18 @@
             <ul class="nav navbar-nav float-right be-user-nav">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-expanded="false">
-                        <img src="<%= staff.staffAvatar.fileUrl %>" alt="Avatar">
+                        <img src="<%= staff.staffAvatar?.fileUrl || '/images/default-avatar.png' %>" alt="Avatar">
                     </a>
                     <div class="dropdown-menu" role="menu">
                         <div class="user-info">
                             <div class="user-name" id="userLogin"
-                                data-user-login-role="<%= staff.user.role.code %>"
-                                data-user-login-id="<%= staff.id %>">
-                                <%= staff.fullName %>
+                                data-user-login-role="<%= staff.user?.role?.code %>"
+                                data-user-login-id="<%= staff?.id %>">
+                                <%= staff?.fullName %>
                             </div>
                             <div class="user-position online">Đang hoạt động</div>
                         </div>
-                        <a class="dropdown-item" href="/cp/staffs/<%= staff.id %>">
+                        <a class="dropdown-item" href="/cp/staffs/<%= staff?.id %>">
                             <span class="icon mdi mdi-face"></span>Tài khoản
                         </a>
                         <a class="dropdown-item" href="#">
@@ -56,7 +56,7 @@
                                             <li class="notification notification-unread">
                                                 <a href="#">
                                                     <div class="image">
-                                                        <img src="/img/avatar2.png" alt="Avatar">
+                                                        <img src="/images/avatar2.png" alt="Avatar">
                                                     </div>
                                                     <div class="notification-info">
                                                         <div class="text">

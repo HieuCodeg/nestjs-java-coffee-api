@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Otp } from 'src/models/entities/otp.entity';
-import { OtpRepository } from 'src/repositories/otp.repository';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class OtpServiceImpl {
   constructor(
     @InjectRepository(Otp)
-    private readonly otpRepository: OtpRepository,
+    private readonly otpRepository: Repository<Otp>,
   ) {}
 
   //   async findAll(): Promise<Otp[]> {
@@ -19,7 +19,12 @@ export class OtpServiceImpl {
   //   }
 
   async getOtpByUserId(userId: number): Promise<Otp | undefined> {
-    return this.otpRepository.getOtpByUserId(userId);
+    return this.otpRepository
+      .createQueryBuilder('otp')
+      .select(['otp.id', 'otp.code', 'otp.user'])
+      .where('otp.deleted = :deleted', { deleted: false })
+      .andWhere('otp.id = :userId', { userId })
+      .getOne();
   }
 
   //   async findById(id: number): Promise<Optional<Otp>> {
@@ -27,7 +32,7 @@ export class OtpServiceImpl {
   //   }
 
   async getByCode(code: string): Promise<Otp> {
-    return this.otpRepository.getByCode(code);
+    return this.otpRepository.findOne({ where: { code } });
   }
 
   async save(otp: Otp): Promise<Otp> {
@@ -39,6 +44,11 @@ export class OtpServiceImpl {
   //   }
 
   async softDelete(otpId: number): Promise<void> {
-    this.otpRepository.softDelete(otpId);
+    this.otpRepository
+      .createQueryBuilder()
+      .update(Otp)
+      .set({ deleted: true })
+      .where('id = :otpId', { otpId })
+      .execute();
   }
 }

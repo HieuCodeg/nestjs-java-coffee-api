@@ -11,9 +11,9 @@ export class Category extends BaseEntity {
   title: string;
 
   toCategoryDTO(): CategoryDTO {
-    return new CategoryDTO({
-      id: this.id,
-      title: this.title,
-    });
+    const categoryDTO = new CategoryDTO();
+    categoryDTO.id = this.id;
+    categoryDTO.title = this.title;
+    return categoryDTO;
   }
 }

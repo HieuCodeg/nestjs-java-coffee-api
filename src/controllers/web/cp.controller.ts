@@ -1,5 +1,7 @@
-import { Controller, Get, Render, Param } from '@nestjs/common';
+import { Controller, Get, Render, Param, UseGuards, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { AppUtils } from 'src/common/app.untils';
+import { JwtAuthGuard } from 'src/config/jwt-auth.guard';
 import { StaffDTO } from 'src/models/DTO/staff/staff.dto';
 import { User } from 'src/models/entities/user.entity';
 import { StaffServiceImpl } from 'src/services/staff.service';
@@ -13,14 +15,18 @@ export class CPController {
     private readonly staffService: StaffServiceImpl,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  @Render('cp/index') // Render template 'cp/index'
-  async showIndexPage() {
-    // const staffDTO: StaffDTO = await this.staffService.getByUsernameDTO(
-    //   this.appUtils.getUserName(),
-    // );
-    const staffDTO: StaffDTO = new StaffDTO();
-    return { staff: staffDTO };
+  @Render('index') // Render template 'cp/index'
+  async showIndexPage(@Req() req: Request) {
+    if ('username' in req?.user) {
+      const staffDTO: StaffDTO = await this.staffService.getByUsernameDTO(
+        String(req.user?.username),
+      );
+      return { staff: staffDTO };
+    }
+
+    return null;
   }
 
   @Get('/login')

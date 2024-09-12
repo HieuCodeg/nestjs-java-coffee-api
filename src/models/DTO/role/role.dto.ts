@@ -1,17 +1,15 @@
+import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 import { Role } from 'src/models/entities/role.entity';
 
 export class RoleDTO {
+  @Expose()
   @IsNotEmpty({ message: 'Bạn chưa chọn quyền!' })
   @IsNumber()
   id: number;
 
+  @Expose()
   code: string;
-
-  constructor(id?: number, code?: string) {
-    this.id = id;
-    this.code = code;
-  }
 
   toRole(): Role {
     const role = new Role();

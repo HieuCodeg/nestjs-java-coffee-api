@@ -6,54 +6,65 @@ import {
   IsNumber,
   IsPositive,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 export class OrderItemKitchenDTO {
+  @Expose()
   @IsOptional()
   @IsNumber()
   @IsPositive()
   orderItemId?: number;
 
+  @Expose()
   @IsOptional()
   @IsNumber()
   @IsPositive()
   productId?: number;
 
+  @Expose()
   @IsOptional()
   @IsString()
   productName?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   tableName?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   size?: string;
 
+  @Expose()
   @IsOptional()
   @IsInt()
   quantity?: number;
 
+  @Expose()
   @IsOptional()
   @IsInt()
   quantityDelivery?: number;
 
+  @Expose()
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   createdAt?: Date;
 
+  @Expose()
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   updatedAt?: Date;
 
+  @Expose()
   @IsOptional()
   @IsNumber()
   @IsPositive()
   orderId?: number;
 
+  @Expose()
   @IsOptional()
   @IsNumber()
   @IsPositive()

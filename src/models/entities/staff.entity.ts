@@ -49,9 +49,12 @@ export class Staff extends BaseEntity {
     staffDTO.dob = AppUtils.localDateToString(this.dob);
     staffDTO.gender = this.gender.toString();
     staffDTO.phone = this.phone;
-    staffDTO.locationRegion = this.locationRegion?.toLocationRegionDTO();
-    staffDTO.user = this.user?.toUserDTO();
-    staffDTO.staffAvatar = this.avatar?.toStaffAvatarDTO();
+    staffDTO.user = this.user ? this.user.toUserDTO() : null;
+
+    staffDTO.locationRegion = this.locationRegion
+      ? this.locationRegion.toLocationRegionDTO()
+      : null;
+    staffDTO.staffAvatar = this.avatar ? this.avatar.toStaffAvatarDTO() : null;
     return staffDTO;
   }
 }

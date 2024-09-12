@@ -4,6 +4,7 @@ import { Request } from 'express';
 import * as dayjs from 'dayjs';
 import * as crypto from 'crypto';
 import { User } from 'src/models/entities/user.entity';
+import { EntityMetadata } from 'typeorm';
 
 interface RequestWithUser extends Request {
   user: User;
@@ -11,6 +12,8 @@ interface RequestWithUser extends Request {
 
 @Injectable()
 export class AppUtils {
+  static readonly DEFAULT_USER_IMAGE_ID = 'default_user_image';
+
   private static readonly stringAB =
     '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   private static readonly DATE_PATTERN = 'YYYY-MM-DD';
@@ -61,5 +64,23 @@ export class AppUtils {
     if (price > 500000) return 'Giá sản phẩm lớn nhất là 500.000 VNĐ.';
     if (price % 1000 !== 0) return 'Giá sản phẩm phải chia hết cho 1.000.';
     return '';
+  }
+
+  getNestedRelations(metadata: EntityMetadata): string[] {
+    const relations = metadata.relations.map(
+      (relation) => relation.propertyPath,
+    );
+
+    // Đệ quy để lấy các quan hệ của các bảng con
+    metadata.relations.forEach((relation) => {
+      const childMetadata = relation.inverseEntityMetadata;
+      const childRelations = childMetadata.relations.map(
+        (childRelation) =>
+          `${relation.propertyPath}.${childRelation.propertyPath}`,
+      );
+      relations.push(...childRelations);
+    });
+
+    return relations;
   }
 }

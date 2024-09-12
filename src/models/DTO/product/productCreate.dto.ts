@@ -1,4 +1,5 @@
 // product-create.dto.ts
+import { Expose } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
@@ -12,30 +13,36 @@ import { Product } from 'src/models/entities/product.entity';
 import { ProductImage } from 'src/models/entities/productImage.entity';
 
 export class ProductCreateDTO {
+  @Expose()
   @IsOptional()
   @IsNumber()
   id?: number;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập tên sản phẩm.' })
   @Length(5, 50, {
     message: 'Tên sản phẩm có độ dài nằm trong khoảng 5 - 50 ký tự.',
   })
   title: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập mô tả sản phẩm.' })
   @Length(5, 500, {
     message: 'Mô tả sản phẩm có độ dài nằm trong khoảng 5 - 500 ký tự.',
   })
   description: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   summary?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   sizes?: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng chọn danh mục sản phẩm.' })
   @Matches(/^\d+$/, { message: 'ID danh mục sản phẩm phải là số.' })
   categoryId: string;

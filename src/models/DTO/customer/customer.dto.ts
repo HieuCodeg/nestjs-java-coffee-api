@@ -1,18 +1,25 @@
 import { Customer } from 'src/models/entities/customer.entity';
 import { LocationRegionDTO } from '../locationRegion/location.dto';
 import { UserDTO } from '../user/user.dto';
+import { Expose } from 'class-transformer';
 
 export class CustomerDTO {
+  @Expose()
   id?: number;
 
+  @Expose()
   fullName: string;
 
+  @Expose()
   phone: string;
 
+  @Expose()
   balance: number;
 
+  @Expose()
   locationRegion: LocationRegionDTO;
 
+  @Expose()
   user: UserDTO;
 
   constructor(partial: Partial<CustomerDTO>) {

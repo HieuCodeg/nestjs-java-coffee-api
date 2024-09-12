@@ -1,5 +1,5 @@
 class AppUtils {
-  static DOMAIN_SERVER = 'http://localhost:25001';
+  static DOMAIN_SERVER = 'http://localhost:3000';
 
   static STAFF_API = this.DOMAIN_SERVER + '/api/staffs';
 

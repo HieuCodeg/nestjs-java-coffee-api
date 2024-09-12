@@ -1,31 +1,39 @@
+import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
 import { StaffAvatar } from 'src/models/entities/staffAvatar.entity';
 
 export class StaffAvatarDTO {
+  @Expose()
   @IsOptional()
   @IsString()
   id?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   fileName?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   fileFolder?: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng chọn hình ảnh' })
   @IsString()
   fileUrl: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   fileType?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   cloudId?: string;
 
+  @Expose()
   @IsOptional()
   @IsNumber()
   ts?: number;

@@ -1,7 +1,19 @@
 <!DOCTYPE html>
 
 <head>
-    <%- include('../layout/header') %>
+    <%- include('../layout/header/header-utils') %>
+    <%- include('../layout/header/header-logo') %>
+    <%- include('../layout/header/header-perfect-scrollbar') %>
+    <%- include('../layout/header/header-material-design') %>
+    <%- include('../layout/header/header-datatables-net-bs4') %>
+    <%- include('../layout/header/header-datatables-net-responsive-bs4') %>
+    <%- include('../layout/header/header-app-css') %>
+    <%- include('../layout/header/header-app-style') %>
+    <%- include('../layout/header/header-loading') %>
+    <%- include('../layout/header/header-fontawesome') %>
+    <%- include('../layout/header/header-sweetalert2') %>
+    <%- include('../layout/header/header-izitoast') %>
+
     <title>Java Coffee</title>
 </head>
 
@@ -10,7 +22,7 @@
 
     <%- include('../layout/top-header') %>
     <%- include('../layout/left-sidebar') %>
-    <%- include('/modalEdit') %>
+    <%- include('../product/modalEdit') %>
 
     <div class="loader hide">
         <div id="loading"></div>
@@ -65,7 +77,16 @@
 
 </div>
 
-<%- include('../layout/script') %>
+<%- include('../layout/script/script-jquery') %>
+<%- include('../layout/script/script-jquery-validate') %>
+<%- include('../layout/script/script-perfect-scrollbar') %>
+<%- include('../layout/script/script-boostrap') %>
+<%- include('../layout/script/script-app') %>
+<%- include('../layout/script/script-datatables-net') %>
+<%- include('../layout/script/script-fontawesome') %>
+<%- include('../layout/script/script-sweetalert2') %>
+<%- include('../layout/script/script-izitoast') %>
+<%- include('../layout/script/script-appUtils') %>
 
 <script type="text/javascript">
 
@@ -591,6 +612,13 @@
 
         App.init();
         App.dataTables();
+
+        let userLoginRole = page.elements.userLogin.data("user-login-role");
+        let str = "";
+        if (userLoginRole == "ADMIN") {
+            page.elements.ShowCreateProduct.addClass("show");
+            page.elements.actionProduct.removeClass("hide");
+        }
 
         page.dialogs.elements.selectSizeEdit.on("change", function () {
             page.dialogs.commands.handleSelectSize();
