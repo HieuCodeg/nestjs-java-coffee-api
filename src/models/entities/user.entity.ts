@@ -36,7 +36,7 @@ export class User extends BaseEntity {
     userDTO.username = this.username;
     userDTO.codeFirstLogin = this.codeFirstLogin;
     userDTO.isFirstLogin = this.isFirstLogin;
-    userDTO.role = this.role.toRoleDTO();
+    userDTO.role = this.role ? this.role.toRoleDTO() : null;
     return userDTO;
   }
 }

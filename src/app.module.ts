@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOption } from 'db/data-source';
 import { AppController } from './app.controller';
@@ -10,6 +11,9 @@ import { UntilModule } from './modules/until.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOption),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     CloudinaryModule,
     UntilModule,
     ControllerModule,

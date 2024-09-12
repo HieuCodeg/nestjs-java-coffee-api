@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { User } from 'src/models/entities/user.entity';
-import { UserRepository } from 'src/repositories/user.repository';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserRepository)
-    private readonly userRepository: UserRepository,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -38,27 +38,35 @@ export class UserService {
   }
 
   async getByUsername(username: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ username });
+    return this.userRepository.findOne({
+      where: { username },
+      relations: ['role'],
+    });
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ username });
+    return await this.userRepository.findOne({
+      where: { username },
+      relations: ['role'],
+    });
   }
 
   async findByCodeFirstLogin(codeFirstLogin: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ codeFirstLogin });
+    return this.userRepository.findOne({ where: { codeFirstLogin } });
   }
 
   async existsByUsername(username: string): Promise<boolean> {
+    // const count = await this.count({ where: { username } });
+    // return count > 0;
     const user = await this.userRepository.findOneBy({ username });
     return !!user;
   }
 
   async softDelete(userId: number): Promise<void> {
-    await this.userRepository.softDelete(userId);
+    await this.userRepository.update(userId, { deleted: true });
   }
 
   async recovery(userId: number): Promise<void> {
-    await this.userRepository.recovery(userId);
+    await this.userRepository.update(userId, { deleted: false });
   }
 }

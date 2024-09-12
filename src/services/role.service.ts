@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoleDTO } from 'src/models/DTO/role/role.dto';
 import { Role } from 'src/models/entities/role.entity';
-import { RoleRepository } from 'src/repositories/role.repository';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RoleServiceImpl {
   constructor(
     @InjectRepository(Role)
-    private readonly roleRepository: RoleRepository,
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async findAll(): Promise<Role[]> {
@@ -31,15 +31,24 @@ export class RoleServiceImpl {
     await this.roleRepository.delete(id);
   }
 
-  async findByCode(name: string): Promise<Role> {
-    return this.roleRepository.findByCode(name);
+  async findByCode(code: string): Promise<Role> {
+    return await this.roleRepository.findOne({ where: { code } });
   }
 
   async getAllRoleDTONoCustomer(): Promise<RoleDTO[]> {
-    return this.roleRepository.getAllRoleDTONoCustomer();
+    return this.roleRepository
+      .createQueryBuilder('ro')
+      .select(['ro.id', 'ro.code'])
+      .where('ro.code <> :code', { code: 'CUSTOMER' })
+      .getRawMany();
   }
 
   async getAllRoleDTONoAdminAndCustomer(): Promise<RoleDTO[]> {
-    return this.roleRepository.getAllRoleDTONoAdminAndCustomer();
+    return this.roleRepository
+      .createQueryBuilder('ro')
+      .select(['ro.id', 'ro.code'])
+      .where('ro.code <> :adminCode', { adminCode: 'ADMIN' })
+      .andWhere('ro.code <> :customerCode', { customerCode: 'CUSTOMER' })
+      .getRawMany();
   }
 }

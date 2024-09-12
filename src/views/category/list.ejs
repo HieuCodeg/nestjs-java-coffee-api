@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 
 <head>
-    <%- include('../layout/header') %>
+    <%- include('../layout/header/header-utils') %>
+    <%- include('../layout/header/header-logo') %>
+    <%- include('../layout/header/header-perfect-scrollbar') %>
+    <%- include('../layout/header/header-material-design') %>
+    <%- include('../layout/header/header-app-css') %>
+    <%- include('../layout/header/header-app-style') %>
+    <%- include('../layout/header/header-fontawesome') %>
+    <%- include('../layout/header/header-sweetalert2') %>
+    <%- include('../layout/header/header-izitoast') %>
+    <%- include('../layout/header/header-loading') %>
+
     <title>Java Coffee</title>
 </head>
 
@@ -13,11 +23,11 @@
     <%- include('../layout/left-sidebar') %>
     
     <!-- form edit modal-->
-    <%- include('/modalUpdateCategory') %>
+    <%- include('../category/modalUpdateCategory') %>
     <!-- form edit modal end-->
     
     <!-- form create modal-->
-    <%- include('/modalCreateCategory') %>
+    <%- include('../category/modalCreateCategory') %>
     <!-- form create modal end-->
 
 
@@ -79,7 +89,16 @@
     <%- include('../layout/right-sidebar') %>
 
 </div>
-<%- include('../layout/script') %>
+<%- include('../layout/script/script-jquery') %>
+<%- include('../layout/script/script-jquery-validate') %>
+<%- include('../layout/script/script-perfect-scrollbar') %>
+<%- include('../layout/script/script-boostrap') %>
+<%- include('../layout/script/script-app') %>
+<%- include('../layout/script/script-fontawesome') %>
+<%- include('../layout/script/script-sweetalert2') %>
+<%- include('../layout/script/script-izitoast') %>
+<%- include('../layout/script/script-appUtils') %>
+<%- include('../layout/header/header-loading') %>
 
 <script>
 
@@ -143,6 +162,7 @@
             url: page.urls.getAllCategory
         })
             .done((data) => {
+                
                 data.map(item => {
                     page.elements.tbCategoryBody.prepend(page.commands.renderCategory(item));
                 });
@@ -174,10 +194,10 @@
 
 
     page.commands.renderCategory = (obj) => {
-
         let userLoginRole = page.elements.userLogin.data("user-login-role");
         let str = "";
         if (userLoginRole == "ADMIN") {
+            
             page.elements.btnShowCreateModal.addClass("show");
             page.elements.actionCategory.removeClass("hide");
             str = `
@@ -535,6 +555,13 @@
 
     page.initializeEventControl = () => {
         App.init();
+
+        let userLoginRole = page.elements.userLogin.data("user-login-role");
+        if (userLoginRole == "ADMIN") {
+            
+            page.elements.btnShowCreateModal.addClass("show");
+            page.elements.actionCategory.removeClass("hide"); 
+        }
 
         page.commands.handleShowGroupModal();
 

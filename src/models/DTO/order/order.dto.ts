@@ -5,7 +5,7 @@ import {
   IsDecimal,
   IsDate,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { TableDTO } from '../table/table.dto';
 import { StaffDTO } from '../staff/staff.dto';
 import { Order } from 'src/models/entities/order.entity';
@@ -14,22 +14,28 @@ import { CTable } from 'src/models/entities/cTable.entity';
 import { Staff } from 'src/models/entities/staff.entity';
 
 export class OrderDTO {
+  @Expose()
   @IsOptional()
   @IsNumber({}, { message: 'ID phải là số.' })
   id?: number;
 
+  @Expose()
   @IsDecimal({}, { message: 'Total amount phải là số thập phân.' })
   totalAmount: number;
 
+  @Expose()
   @IsString({ message: 'Order status phải là chuỗi.' })
   orderStatus: string;
 
+  @Expose()
   @Type(() => TableDTO)
   table: TableDTO;
 
+  @Expose()
   @Type(() => StaffDTO)
   staff: StaffDTO;
 
+  @Expose()
   @IsOptional()
   @IsDate({ message: 'Created at phải là ngày.' })
   @Type(() => Date)

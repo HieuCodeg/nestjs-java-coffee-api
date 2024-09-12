@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -7,6 +8,7 @@ import {
 } from 'class-validator';
 
 export class UserUpdatePasswordDTO {
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập mật khẩu.' })
   @Matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, {
     message:
@@ -17,6 +19,7 @@ export class UserUpdatePasswordDTO {
   })
   password: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập lại mật khẩu.' })
   @Matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, {
     message:
@@ -27,6 +30,7 @@ export class UserUpdatePasswordDTO {
   })
   passwordConfirm: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   codeFirstLogin?: string;

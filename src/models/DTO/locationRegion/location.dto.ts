@@ -1,18 +1,23 @@
+import { Expose } from 'class-transformer';
 import { LocationRegion } from 'src/models/entities/location.entity';
 
 export class LocationRegionDTO {
+  @Expose()
   id: number;
+  @Expose()
   provinceId: string;
+  @Expose()
   provinceName: string;
+  @Expose()
   districtId: string;
+  @Expose()
   districtName: string;
+  @Expose()
   wardId: string;
+  @Expose()
   wardName: string;
+  @Expose()
   address: string;
-
-  constructor(partial: Partial<LocationRegionDTO>) {
-    Object.assign(this, partial);
-  }
 
   toLocationRegion(): LocationRegion {
     const locationRegion = new LocationRegion();

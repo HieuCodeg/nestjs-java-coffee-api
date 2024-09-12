@@ -16,14 +16,6 @@ import { Role } from 'src/models/entities/role.entity';
 import { Staff } from 'src/models/entities/staff.entity';
 import { StaffAvatar } from 'src/models/entities/staffAvatar.entity';
 import { User } from 'src/models/entities/user.entity';
-import { OrderItemRepository } from 'src/repositories/order-item.repository';
-import { OrderRepository } from 'src/repositories/order.repository';
-import { OtpRepository } from 'src/repositories/otp.repository';
-import { ProductRepository } from 'src/repositories/product.repository';
-import { RoleRepository } from 'src/repositories/role.repository';
-import { StaffRepository } from 'src/repositories/staff.repository';
-import { TableRepository } from 'src/repositories/table.repository';
-import { UserRepository } from 'src/repositories/user.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -43,15 +35,6 @@ import { UserRepository } from 'src/repositories/user.repository';
       Staff,
       StaffAvatar,
       User,
-      //   repossitory
-      StaffRepository,
-      UserRepository,
-      OrderItemRepository,
-      OrderRepository,
-      OtpRepository,
-      ProductRepository,
-      RoleRepository,
-      TableRepository,
     ]),
   ],
   exports: [TypeOrmModule],

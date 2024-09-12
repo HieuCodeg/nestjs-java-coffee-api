@@ -1,10 +1,13 @@
+import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
 
 export class UserForgetPasswordDTO {
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập email.' })
   @IsEmail({}, { message: 'Email không đúng định dạng.' })
   username: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập mật khẩu mới.' })
   @Matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, {
     message:
@@ -15,6 +18,7 @@ export class UserForgetPasswordDTO {
   })
   password: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập lại mật khẩu mới.' })
   @Matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, {
     message:
@@ -25,6 +29,7 @@ export class UserForgetPasswordDTO {
   })
   passwordConfirm: string;
 
+  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập mã OTP.' })
   @Length(6, 6, { message: 'Mã OTP bao gồm 6 ký tự.' })
   otp: string;

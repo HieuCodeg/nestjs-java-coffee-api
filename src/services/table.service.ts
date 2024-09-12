@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TableDTO } from 'src/models/DTO/table/table.dto';
 import { CTable } from 'src/models/entities/cTable.entity';
 import { EnumTableStatus } from 'src/models/enums/enumTableStatus';
-import { TableRepository } from 'src/repositories/table.repository';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TableService {
   constructor(
     @InjectRepository(CTable)
-    private readonly tableRepository: TableRepository,
+    private readonly tableRepository: Repository<CTable>,
   ) {}
 
   async findAll(): Promise<CTable[]> {
@@ -17,11 +17,20 @@ export class TableService {
   }
 
   async getAllTableWhereDeletedIsFalse(): Promise<TableDTO[]> {
-    return this.tableRepository.getAllTableWhereDeletedIsFalse();
+    return this.tableRepository
+      .createQueryBuilder('tb')
+      .select(['tb.id', 'tb.name', 'tb.status'])
+      .where('tb.deleted = :deleted', { deleted: false })
+      .getRawMany();
   }
 
   async getTablesWhereStatus(status: EnumTableStatus): Promise<TableDTO[]> {
-    return this.tableRepository.getTablesWhereStatus(status);
+    return this.tableRepository
+      .createQueryBuilder('tb')
+      .select(['tb.id', 'tb.name', 'tb.status'])
+      .where('tb.deleted = :deleted', { deleted: false })
+      .andWhere('tb.status = :status', { status })
+      .getRawMany();
   }
 
   async getById(id: number): Promise<CTable | undefined> {
@@ -33,11 +42,20 @@ export class TableService {
   }
 
   async existByName(name: string): Promise<boolean> {
-    return await this.tableRepository.existsByName(name);
+    const count = await this.tableRepository
+      .createQueryBuilder('tb')
+      .where('tb.name = :name', { name })
+      .getCount();
+    return count > 0;
   }
 
   async existByNameAndIdIsNot(name: string, id: number): Promise<boolean> {
-    return await this.tableRepository.existsByNameAndIdIsNot(name, id);
+    const count = await this.tableRepository
+      .createQueryBuilder('tb')
+      .where('tb.name = :name', { name })
+      .andWhere('tb.id <> :id', { id })
+      .getCount();
+    return count > 0;
   }
 
   async save(cTable: CTable): Promise<CTable> {
@@ -49,6 +67,11 @@ export class TableService {
   //   }
 
   async softDelete(tableId: number): Promise<void> {
-    await this.tableRepository.softDelete(tableId);
+    await this.tableRepository
+      .createQueryBuilder()
+      .update(CTable)
+      .set({ deleted: true })
+      .where('id = :tableId', { tableId })
+      .execute();
   }
 }

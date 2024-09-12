@@ -40,7 +40,7 @@ export class CategoryServiceImpl {
   async findAllCategoryDTO(): Promise<CategoryDTO[]> {
     return this.categoryRepository
       .createQueryBuilder('category')
-      .select(['category.id', 'category.title', 'category.description']) // Thay đổi trường theo DTO
+      .select(['category.id AS id', 'category.title AS title'])
       .where('category.deleted = :deleted', { deleted: false })
       .getRawMany(); // Hoặc getMany() nếu bạn đã ánh xạ DTO
   }
@@ -48,7 +48,7 @@ export class CategoryServiceImpl {
   async findCategoryDTOById(id: number): Promise<CategoryDTO | null> {
     const category = await this.categoryRepository
       .createQueryBuilder('category')
-      .select(['category.id', 'category.title', 'category.description']) // Thay đổi trường theo DTO
+      .select(['id', 'title']) // Thay đổi trường theo DTO
       .where('category.id = :id', { id })
       .andWhere('category.deleted = :deleted', { deleted: false })
       .getRawOne(); // Hoặc getOne() nếu bạn đã ánh xạ DTO

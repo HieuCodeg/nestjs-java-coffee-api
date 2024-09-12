@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -20,7 +22,7 @@ import { OrderItem } from 'src/models/entities/orderItem.entity';
 import { EnumOrderItemStatus } from 'src/models/enums/enumOrderItemStatus';
 import { EnumOrderStatus } from 'src/models/enums/enumOrderStatus';
 import { EnumTableStatus } from 'src/models/enums/enumTableStatus';
-import { OrderRepository } from 'src/repositories/order.repository';
+import { Repository } from 'typeorm';
 import { OrderItemService } from './order-item.service';
 import { ProductService } from './product.service';
 import { StaffServiceImpl } from './staff.service';
@@ -34,10 +36,11 @@ export class OrderService {
 
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: OrderRepository,
+    private readonly orderRepository: Repository<Order>,
     private readonly tableService: TableService,
     private readonly staffService: StaffServiceImpl,
     private readonly productService: ProductService,
+    @Inject(forwardRef(() => OrderItemService))
     private readonly orderItemService: OrderItemService,
   ) {}
 
@@ -46,18 +49,56 @@ export class OrderService {
   }
 
   async getAllOrderDTOWhereDeletedIsFalse(): Promise<OrderDTO[]> {
-    return this.orderRepository.getAllOrderDTOWhereDeletedIsFalse();
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select([
+        'od.id',
+        'od.totalAmount',
+        'od.orderStatus',
+        'od.table',
+        'od.staff',
+        'od.createdAt',
+      ])
+      .where('od.deleted = :deleted', { deleted: false })
+      .getRawMany<OrderDTO>();
   }
 
   async getAllOrderDTOByDayToDay(
     startDay: string,
     endDay: string,
   ): Promise<OrderDTO[]> {
-    return this.orderRepository.getAllOrderDTOByDayToDay(startDay, endDay);
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select([
+        'od.id',
+        'od.totalAmount',
+        'od.orderStatus',
+        'od.table',
+        'od.staff',
+        'od.createdAt',
+      ])
+      .where('od.deleted = :deleted', { deleted: false })
+      .andWhere("DATE_FORMAT(od.createdAt,'%Y-%m-%d') > :startDay", {
+        startDay,
+      })
+      .andWhere("DATE_FORMAT(od.createdAt,'%Y-%m-%d') < :endDay", { endDay })
+      .getRawMany<OrderDTO>();
   }
 
   async getOrderDTOByStatus(orderStatus: EnumOrderStatus): Promise<OrderDTO[]> {
-    return this.orderRepository.getOrderDTOByStatus(orderStatus);
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select([
+        'od.id',
+        'od.totalAmount',
+        'od.orderStatus',
+        'od.table',
+        'od.staff',
+        'od.createdAt',
+      ])
+      .where('od.deleted = :deleted', { deleted: false })
+      .andWhere('od.orderStatus = :orderStatus', { orderStatus })
+      .getRawMany<OrderDTO>();
   }
 
   async getAllOrderKitchenByTable(
@@ -115,10 +156,19 @@ export class OrderService {
     tableId: number,
     orderStatus: EnumOrderStatus,
   ): Promise<OrderDTO[]> {
-    return this.orderRepository.getOrderDTOByTableIdAndOrderStatus(
-      tableId,
-      orderStatus,
-    );
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select([
+        'od.id',
+        'od.totalAmount',
+        'od.orderStatus',
+        'od.table',
+        'od.staff',
+      ])
+      .where('od.deleted = :deleted', { deleted: false })
+      .andWhere('od.table.id = :tableId', { tableId })
+      .andWhere('od.orderStatus = :orderStatus', { orderStatus })
+      .getRawMany<OrderDTO>();
   }
 
   async createWithOrderItems(
@@ -280,7 +330,11 @@ export class OrderService {
   }
 
   async countOrderOfCurrentDay(): Promise<OrderCountCurrentMonthDTO[]> {
-    return this.orderRepository.countOrderOfCurrentDay();
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select(['COUNT(od.id) AS orderCount'])
+      .where("DATE(Date_Format(od.createdAt,'%Y/%m/%d')) = CURRENT_DATE()")
+      .getRawMany<OrderCountCurrentMonthDTO>();
   }
 
   async softDelete(id: number): Promise<void> {
@@ -288,29 +342,74 @@ export class OrderService {
   }
 
   async getReportByYear(year: number): Promise<ReportYearDTO[]> {
-    return this.orderRepository.getReportByYear(year);
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select([
+        'MONTH(od.createdAt) AS month',
+        'SUM(od.totalAmount) AS totalAmount',
+      ])
+      .where('YEAR(od.createdAt) = :year', { year })
+      .andWhere('od.orderStatus = :orderStatus', { orderStatus: 'PAID' })
+      .groupBy('MONTH(od.createdAt)')
+      .orderBy('MONTH(od.createdAt)', 'ASC')
+      .getRawMany<ReportYearDTO>();
   }
 
   async getReportByMonth(
     month: number,
     year: number,
   ): Promise<ReportYearDTO[]> {
-    return this.orderRepository.getReportByMonth(month, year);
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select([
+        'MONTH(od.createdAt) AS month',
+        'SUM(od.totalAmount) AS totalAmount',
+      ])
+      .where('MONTH(od.createdAt) = :month', { month })
+      .andWhere('YEAR(od.createdAt) = :year', { year })
+      .groupBy('MONTH(od.createdAt)')
+      .getRawMany<ReportYearDTO>();
   }
 
   async getReportOfCurrentMonth(): Promise<ReportDTO[]> {
-    return this.orderRepository.getReportOfCurrentMonth();
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select(['SUM(od.totalAmount) AS totalAmount'])
+      .where(
+        "MONTH(Date_Format(od.createdAt,'%Y/%m/%d')) = MONTH(CURRENT_DATE())",
+      )
+      .andWhere(
+        "YEAR(Date_Format(od.createdAt,'%Y/%m/%d')) = YEAR(CURRENT_DATE())",
+      )
+      .andWhere('od.orderStatus = :orderStatus', { orderStatus: 'PAID' })
+      .getRawMany<ReportDTO>();
   }
 
   async getReportOfDay(day: string): Promise<ReportDTO[]> {
-    return this.orderRepository.getReportOfDay(day);
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select(['SUM(od.totalAmount) AS totalAmount'])
+      .where("DATE_FORMAT(od.createdAt,'%Y-%m-%d') = :day", { day })
+      .andWhere('od.orderStatus = :orderStatus', { orderStatus: 'PAID' })
+      .getRawMany<ReportDTO>();
   }
 
   async getReportFromDayToDay(
     startDay: string,
     endDay: string,
   ): Promise<ReportDayToDayDTO[]> {
-    return this.orderRepository.getReportFromDayToDay(startDay, endDay);
+    return this.orderRepository
+      .createQueryBuilder('od')
+      .select([
+        "DATE_FORMAT(od.createdAt,'%d/%m/%Y') AS date",
+        'SUM(od.totalAmount) AS totalAmount',
+      ])
+      .where("DATE_FORMAT(od.createdAt,'%Y-%m-%d') > :startDay", { startDay })
+      .andWhere("DATE_FORMAT(od.createdAt,'%Y-%m-%d') < :endDay", { endDay })
+      .andWhere('od.orderStatus = :orderStatus', { orderStatus: 'PAID' })
+      .groupBy("DATE_FORMAT(od.createdAt,'%d/%m/%Y')")
+      .orderBy("DATE_FORMAT(od.createdAt,'%d/%m/%Y')")
+      .getRawMany<ReportDayToDayDTO>();
   }
 
   async deleteOrderById(orderId: number): Promise<void> {

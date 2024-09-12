@@ -6,48 +6,60 @@ import {
   IsOptional,
   IsDate,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { OrderDTO } from '../order/order.dto';
 import { OrderItem } from 'src/models/entities/orderItem.entity';
 import { ProductDTO } from '../product/product.dto';
 import { EnumOrderItemStatus } from 'src/models/enums/enumOrderItemStatus';
 
 export class OrderItemDTO {
+  @Expose()
   @IsOptional()
   @IsNumber({}, { message: 'ID phải là số.' })
   id?: number;
 
+  @Expose()
   @IsString({ message: 'Size phải là chuỗi.' })
   size: string;
 
+  @Expose()
   @IsDecimal({}, { message: 'Price phải là số thập phân.' })
   price: number;
 
+  @Expose()
   @IsInt({ message: 'Quantity phải là số nguyên.' })
   quantity: number;
 
+  @Expose()
   @IsInt({ message: 'Quantity delivery phải là số nguyên.' })
   quantityDelivery: number;
 
+  @Expose()
   @IsDecimal({}, { message: 'Amount phải là số thập phân.' })
   amount: number;
 
+  @Expose()
   @IsOptional()
   @IsString({ message: 'Note phải là chuỗi.' })
   note?: string;
 
+  @Expose()
   @IsNumber({}, { message: 'Table ID phải là số.' })
   tableId: number;
 
+  @Expose()
   @Type(() => ProductDTO)
   product: ProductDTO;
 
+  @Expose()
   @Type(() => OrderDTO)
   order: OrderDTO;
 
+  @Expose()
   @IsString({ message: 'Order item status phải là chuỗi.' })
   orderItemStatus: string;
 
+  @Expose()
   @IsOptional()
   @IsDate({ message: 'CreatedAt phải là ngày tháng.' })
   createdAt?: Date;

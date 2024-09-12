@@ -1,19 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderItemDTO } from 'src/models/DTO/orderItem/orderItem.dto';
 import { OrderItemResponseDTO } from 'src/models/DTO/orderItem/orderItemResponse.dto';
 import { ReportProductDTO } from 'src/models/DTO/report/reportProduct.dto';
 import { OrderItem } from 'src/models/entities/orderItem.entity';
 import { EnumOrderItemStatus } from 'src/models/enums/enumOrderItemStatus';
-import { OrderItemRepository } from 'src/repositories/order-item.repository';
+import { Repository } from 'typeorm';
 import { OrderService } from './order.service';
 
 @Injectable()
 export class OrderItemService {
   constructor(
-    @InjectRepository(OrderItemRepository)
-    private readonly orderItemRepository: OrderItemRepository,
-
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
+    @Inject(forwardRef(() => OrderService))
     private readonly orderService: OrderService,
   ) {}
 
@@ -23,16 +23,50 @@ export class OrderItemService {
 
   async getOrderItemDTOByOrderIdAndStatus(
     orderId: number,
-    enumOrderItemStatus: EnumOrderItemStatus,
+    orderItemStatus: EnumOrderItemStatus,
   ): Promise<OrderItemDTO[]> {
-    return this.orderItemRepository.getOrderItemDTOByOrderIdAndStatus(
-      orderId,
-      enumOrderItemStatus,
-    );
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.size',
+        'oi.price',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.amount',
+        'oi.note',
+        'oi.tableId',
+        'oi.product',
+        'oi.order',
+        'oi.orderItemStatus',
+        'oi.createdAt',
+      ])
+      .where('oi.deleted = :deleted', { deleted: false })
+      .andWhere('oi.order.id = :orderId', { orderId })
+      .andWhere('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .getRawMany<OrderItemDTO>();
   }
 
   async getOrderItemDTOByOrderId(orderId: number): Promise<OrderItemDTO[]> {
-    return this.orderItemRepository.getOrderItemDTOByOrderId(orderId);
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.size',
+        'oi.price',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.amount',
+        'oi.note',
+        'oi.tableId',
+        'oi.product',
+        'oi.order',
+        'oi.orderItemStatus',
+        'oi.createdAt',
+      ])
+      .where('oi.deleted = :deleted', { deleted: false })
+      .andWhere('oi.order.id = :orderId', { orderId })
+      .getRawMany<OrderItemDTO>();
   }
 
   async getOrderItemByProductAndSizeAndStatus(
@@ -40,11 +74,28 @@ export class OrderItemService {
     productId: number,
     size: string,
   ): Promise<OrderItemDTO[]> {
-    return this.orderItemRepository.getOrderItemByProductAndSizeAndStatus(
-      orderItemStatus,
-      productId,
-      size,
-    );
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.size',
+        'oi.price',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.amount',
+        'oi.note',
+        'oi.tableId',
+        'oi.product',
+        'oi.order',
+        'oi.orderItemStatus',
+        'oi.createdAt',
+      ])
+      .where('oi.deleted = :deleted', { deleted: false })
+      .andWhere('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .andWhere('oi.product.id = :productId', { productId })
+      .andWhere('oi.size = :size', { size })
+      .orderBy('oi.createdAt', 'ASC')
+      .getRawMany<OrderItemDTO>();
   }
 
   async getOrderItemByProductAndSizeAndStatusAndTable(
@@ -53,54 +104,144 @@ export class OrderItemService {
     size: string,
     orderId: number,
   ): Promise<OrderItemDTO[]> {
-    return this.orderItemRepository.getOrderItemByProductAndSizeAndStatusAndTable(
-      orderItemStatus,
-      productId,
-      size,
-      orderId,
-    );
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.size',
+        'oi.price',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.amount',
+        'oi.note',
+        'oi.tableId',
+        'oi.product',
+        'oi.order',
+        'oi.orderItemStatus',
+        'oi.createdAt',
+      ])
+      .where('oi.deleted = :deleted', { deleted: false })
+      .andWhere('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .andWhere('oi.product.id = :productId', { productId })
+      .andWhere('oi.size = :size', { size })
+      .andWhere('oi.order.id = :orderId', { orderId })
+      .orderBy('oi.createdAt', 'ASC')
+      .getRawMany<OrderItemDTO>();
   }
 
   async getOrderItemResponseDTOByOrderIdAndOrderItemStatus(
     orderId: number,
-    enumOrderItemStatus: EnumOrderItemStatus,
+    orderItemStatus: EnumOrderItemStatus,
   ): Promise<OrderItemResponseDTO[]> {
-    return this.orderItemRepository.getOrderItemResponseDTOByOrderIdAndOrderItemStatus(
-      orderId,
-      enumOrderItemStatus,
-    );
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.size',
+        'oi.price',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.amount',
+        'oi.note',
+        'oi.tableId',
+        'oi.product',
+        'oi.order',
+        'oi.orderItemStatus',
+      ])
+      .where('oi.deleted = :deleted', { deleted: false })
+      .andWhere('oi.order.id = :orderId', { orderId })
+      .andWhere('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .getRawMany<OrderItemResponseDTO>();
   }
 
   async getOrderItemResponseDTOByOrderId(
     orderId: number,
   ): Promise<OrderItemResponseDTO[]> {
-    return this.orderItemRepository.getOrderItemResponseDTOByOrderId(orderId);
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.size',
+        'oi.price',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.amount',
+        'oi.note',
+        'oi.tableId',
+        'oi.product',
+        'oi.order',
+        'oi.orderItemStatus',
+      ])
+      .where('oi.deleted = :deleted', { deleted: false })
+      .andWhere('oi.order.id = :orderId', { orderId })
+      .getRawMany<OrderItemResponseDTO>();
   }
 
   async getOrderItemByStatusGroupByProduct(
     orderItemStatus: EnumOrderItemStatus,
   ): Promise<any[]> {
-    return this.orderItemRepository.getOrderItemByStatusGroupByProduct(
-      orderItemStatus,
-    );
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'pd.id',
+        'pd.title',
+        'oi.size',
+        'SUM(oi.quantity) as totalQuantity',
+        'SUM(oi.quantityDelivery) as totalQuantityDelivery',
+      ])
+      .innerJoin('oi.product', 'pd')
+      .where('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .groupBy('oi.product.id')
+      .addGroupBy('oi.size')
+      .getMany();
   }
 
   async getOrderItemByStatusWithTable(
     orderItemStatus: EnumOrderItemStatus,
   ): Promise<any[]> {
-    return this.orderItemRepository.getOrderItemByStatusWithTable(
-      orderItemStatus,
-    );
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.product.id',
+        'pd.title',
+        'tb.name',
+        'oi.size',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.createdAt',
+        'oi.updatedAt',
+        'oi.order.id',
+        'oi.tableId',
+      ])
+      .innerJoin('oi.product', 'pd')
+      .innerJoin('oi.table', 'tb')
+      .where('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .getMany();
   }
 
   async getOrderItemByStatusAndTable(
     orderItemStatus: EnumOrderItemStatus,
     tableId: number,
   ): Promise<any[]> {
-    return this.orderItemRepository.getOrderItemByStatusAndTable(
-      orderItemStatus,
-      tableId,
-    );
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'tb.name',
+        'pd.id',
+        'pd.title',
+        'oi.size',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.createdAt',
+      ])
+      .innerJoin('oi.product', 'pd')
+      .innerJoin('oi.table', 'tb')
+      .where('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .andWhere('oi.tableId = :tableId', { tableId })
+      .orderBy('oi.createdAt', 'ASC')
+      .getMany();
   }
 
   async changeStatusFromCookingToWaiterToProduct(
@@ -121,14 +262,14 @@ export class OrderItemService {
     if (orderItemDTO.quantity === 1) {
       newOrderItem = orderItemDTO.toOrderItem();
       const amount = orderItemDTO.price * orderItemDTO.quantity;
-      await this.orderItemRepository.updateAmount(amount, orderItemDTO.id);
+      await this.updateAmount(amount, orderItemDTO.id);
     } else {
       const quantity = orderItemDTO.quantity - 1;
 
-      await this.orderItemRepository.updateQuantity(quantity, orderItemDTO.id);
+      await this.updateQuantity(quantity, orderItemDTO.id);
 
       const amount = orderItemDTO.price * quantity;
-      await this.orderItemRepository.updateAmount(amount, orderItemDTO.id);
+      await this.updateAmount(amount, orderItemDTO.id);
 
       const timeCreated = orderItemDTO.createdAt;
       newOrderItem = new OrderItem();
@@ -164,8 +305,8 @@ export class OrderItemService {
       const quantity = orderItem.quantity - 1;
       const amount = orderItem.price * quantity;
 
-      await this.orderItemRepository.updateQuantity(quantity, orderItem.id);
-      await this.orderItemRepository.updateAmount(amount, orderItem.id);
+      await this.updateQuantity(quantity, orderItem.id);
+      await this.updateAmount(amount, orderItem.id);
 
       newOrderItem = this.orderItemRepository.create({
         size: orderItem.size,
@@ -199,8 +340,8 @@ export class OrderItemService {
       const quantity = orderItem.quantity - 1;
       const amount = orderItem.price * quantity;
 
-      await this.orderItemRepository.updateQuantity(quantity, orderItem.id);
-      await this.orderItemRepository.updateAmount(amount, orderItem.id);
+      await this.updateQuantity(quantity, orderItem.id);
+      await this.updateAmount(amount, orderItem.id);
 
       newOrderItem = this.orderItemRepository.create({
         size: orderItem.size,
@@ -234,13 +375,15 @@ export class OrderItemService {
 
     if (!order) return;
 
-    const orderItemListCurrent =
-      await this.orderItemRepository.getAllByOrderIdAndStatus(orderId, status);
+    const orderItemListCurrent = await this.getAllByOrderIdAndStatus(
+      orderId,
+      status,
+    );
 
     if (orderItemListCurrent.length === 0) {
       const createdAt = itemNew.createdAt;
       await this.orderItemRepository.save(itemNew);
-      await this.orderItemRepository.updateCreatedAt(createdAt, itemNew.id);
+      await this.updateCreatedAt(createdAt, itemNew.id);
     } else {
       for (const itemCurrent of orderItemListCurrent) {
         if (
@@ -260,7 +403,7 @@ export class OrderItemService {
         } else {
           const createdAt = itemNew.createdAt;
           await this.orderItemRepository.save(itemNew);
-          await this.orderItemRepository.updateCreatedAt(createdAt, itemNew.id);
+          await this.updateCreatedAt(createdAt, itemNew.id);
         }
       }
     }
@@ -277,16 +420,15 @@ export class OrderItemService {
 
     if (!order) return;
 
-    const orderItemListCurrent =
-      await this.orderItemRepository.getAllByOrderIdAndStatus(
-        orderId,
-        EnumOrderItemStatus.WAITER,
-      );
+    const orderItemListCurrent = await this.getAllByOrderIdAndStatus(
+      orderId,
+      EnumOrderItemStatus.WAITER,
+    );
 
     if (orderItemListCurrent.length === 0) {
       const createdAt = itemNew.createdAt;
       await this.orderItemRepository.save(itemNew);
-      await this.orderItemRepository.updateCreatedAt(createdAt, itemNew.id);
+      await this.updateCreatedAt(createdAt, itemNew.id);
     } else {
       for (const itemCurrent of orderItemListCurrent) {
         if (
@@ -302,7 +444,7 @@ export class OrderItemService {
         } else {
           const createdAt = itemNew.createdAt;
           await this.orderItemRepository.save(itemNew);
-          await this.orderItemRepository.updateCreatedAt(createdAt, itemNew.id);
+          await this.updateCreatedAt(createdAt, itemNew.id);
         }
       }
     }
@@ -317,11 +459,10 @@ export class OrderItemService {
 
     if (!order) return;
 
-    const orderItemListCurrent =
-      await this.orderItemRepository.getAllByOrderIdAndStatus(
-        orderId,
-        EnumOrderItemStatus.DELIVERY,
-      );
+    const orderItemListCurrent = await this.getAllByOrderIdAndStatus(
+      orderId,
+      EnumOrderItemStatus.DELIVERY,
+    );
 
     let found = false;
 
@@ -344,7 +485,7 @@ export class OrderItemService {
       itemNew.orderItemStatus = EnumOrderItemStatus.DELIVERY;
       const createdAt = itemNew.createdAt;
       await this.orderItemRepository.save(itemNew);
-      await this.orderItemRepository.updateCreatedAt(createdAt, itemNew.id);
+      await this.updateCreatedAt(createdAt, itemNew.id);
     }
 
     order.totalAmount = await this.orderService.calculateTotalAmount(orderId);
@@ -357,11 +498,10 @@ export class OrderItemService {
 
     if (!order) return;
 
-    const orderItemListCurrent =
-      await this.orderItemRepository.getAllByOrderIdAndStatus(
-        orderId,
-        EnumOrderItemStatus.DONE,
-      );
+    const orderItemListCurrent = await this.getAllByOrderIdAndStatus(
+      orderId,
+      EnumOrderItemStatus.DONE,
+    );
 
     let found = false;
 
@@ -384,7 +524,7 @@ export class OrderItemService {
       itemNew.orderItemStatus = EnumOrderItemStatus.DONE;
       const createdAt = itemNew.createdAt;
       await this.orderItemRepository.save(itemNew);
-      await this.orderItemRepository.updateCreatedAt(createdAt, itemNew.id);
+      await this.updateCreatedAt(createdAt, itemNew.id);
     }
 
     order.totalAmount = await this.orderService.calculateTotalAmount(orderId);
@@ -421,21 +561,94 @@ export class OrderItemService {
   }
 
   async softDelete(id: number): Promise<void> {
-    await this.orderItemRepository.softDelete(id);
+    await this.orderItemRepository
+      .createQueryBuilder()
+      .update(OrderItem)
+      .set({ deleted: true })
+      .where('id = :orderItemId', { id })
+      .execute();
   }
 
   async updateStatus(
     orderItemStatus: EnumOrderItemStatus,
     orderItemId: number,
   ): Promise<void> {
-    await this.orderItemRepository.updateStatus(orderItemStatus, orderItemId);
+    await this.orderItemRepository
+      .createQueryBuilder()
+      .update(OrderItem)
+      .set({ orderItemStatus })
+      .where('id = :orderItemId', { orderItemId })
+      .execute();
   }
 
   async updateQuantity(quantity: number, orderItemId: number): Promise<void> {
-    await this.orderItemRepository.updateQuantity(quantity, orderItemId);
+    await this.orderItemRepository
+      .createQueryBuilder()
+      .update(OrderItem)
+      .set({ quantity })
+      .where('id = :orderItemId', { orderItemId })
+      .execute();
   }
 
   async getTop5Product(): Promise<ReportProductDTO[]> {
-    return this.getTop5Product();
+    return this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'pd.title',
+        'pd.productImage.fileFolder',
+        'pd.productImage.fileName',
+        'oi.size',
+        'SUM(oi.quantity) as totalQuantity',
+        'SUM(oi.amount) as totalAmount',
+      ])
+      .innerJoin('oi.product', 'pd')
+      .groupBy('oi.product.id')
+      .addGroupBy('oi.size')
+      .orderBy('SUM(oi.quantity)', 'DESC')
+      .limit(5)
+      .getMany();
+  }
+
+  async updateAmount(amount: number, orderItemId: number): Promise<void> {
+    await this.orderItemRepository
+      .createQueryBuilder()
+      .update(OrderItem)
+      .set({ amount })
+      .where('id = :orderItemId', { orderItemId })
+      .execute();
+  }
+
+  async updateCreatedAt(createdAt: Date, orderItemId: number): Promise<void> {
+    await this.orderItemRepository
+      .createQueryBuilder()
+      .update(OrderItem)
+      .set({ createdAt })
+      .where('id = :orderItemId', { orderItemId })
+      .execute();
+  }
+
+  async getAllByOrderIdAndStatus(
+    orderId: number,
+    orderItemStatus: EnumOrderItemStatus,
+  ): Promise<OrderItemDTO[]> {
+    return await this.orderItemRepository
+      .createQueryBuilder('oi')
+      .select([
+        'oi.id',
+        'oi.size',
+        'oi.price',
+        'oi.quantity',
+        'oi.quantityDelivery',
+        'oi.amount',
+        'oi.note',
+        'oi.tableId',
+        'oi.product',
+        'oi.order',
+        'oi.orderItemStatus',
+      ])
+      .where('oi.deleted = :deleted', { deleted: false })
+      .andWhere('oi.order.id = :orderId', { orderId })
+      .andWhere('oi.orderItemStatus = :orderItemStatus', { orderItemStatus })
+      .getRawMany<OrderItemDTO>();
   }
 }

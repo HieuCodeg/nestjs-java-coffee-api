@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   IsOptional,
   IsString,
@@ -11,54 +12,67 @@ import { Product } from 'src/models/entities/product.entity';
 import { EnumOrderItemStatus } from 'src/models/enums/enumOrderItemStatus';
 
 export class OrderItemResponseDTO {
+  @Expose()
   @IsOptional()
   @IsNumber()
   id?: number;
 
+  @Expose()
   @IsOptional()
   @IsString()
   size?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   productName?: string;
 
+  @Expose()
   @IsOptional()
   @IsString()
   productPhoto?: string;
 
+  @Expose()
   @IsOptional()
   @IsDecimal()
   price?: number;
 
+  @Expose()
   @IsOptional()
   @IsInt()
   quantity?: number;
 
+  @Expose()
   @IsOptional()
   @IsInt()
   quantityDelivery?: number;
 
+  @Expose()
   @IsOptional()
   @IsDecimal()
   amount?: number;
 
+  @Expose()
   @IsOptional()
   @IsString()
   note?: string;
 
+  @Expose()
   @IsOptional()
   @IsNumber()
   tableId?: number;
 
+  @Expose()
   @IsOptional()
   @IsNumber()
   productId?: number;
 
+  @Expose()
   @IsOptional()
   @IsNumber()
   orderId?: number;
 
+  @Expose()
   @IsOptional()
   @IsString()
   orderItemStatus?: string;

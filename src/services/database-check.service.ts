@@ -21,18 +21,26 @@ export class DatabaseCheckServiceImpl {
   }
 
   async getDatabaseCheck(): Promise<DatabaseCheck> {
-    return this.databaseCheckRepository.findOneOrFail({
+    let databaseCheck = await this.databaseCheckRepository.findOne({
       where: { id: DatabaseCheckServiceImpl.DATABASE_CHECK_ID },
     });
+    if (!databaseCheck) {
+      await this.create({ id: 0, productCheck: 0, tableCheck: 0 });
+      databaseCheck = await this.databaseCheckRepository.findOne({
+        where: { id: DatabaseCheckServiceImpl.DATABASE_CHECK_ID },
+      });
+    }
+    return databaseCheck;
   }
 
   //   findById(id: number): Promise<DatabaseCheck | null> {
   //     return null;
   //   }
 
-  //   save(databaseCheck: DatabaseCheck): Promise<DatabaseCheck> {
-  //     return null;
-  //   }
+  async create(data: Partial<DatabaseCheck>): Promise<DatabaseCheck> {
+    const newCheck = this.databaseCheckRepository.create(data);
+    return this.databaseCheckRepository.save(newCheck);
+  }
 
   async updateWithTableCheck(): Promise<DatabaseCheck> {
     const databaseCheck = await this.getDatabaseCheck();
@@ -43,6 +51,7 @@ export class DatabaseCheckServiceImpl {
 
   async updateWithProductCheck(): Promise<DatabaseCheck> {
     const databaseCheck = await this.getDatabaseCheck();
+    console.log(databaseCheck, 'check');
     const productCheck = databaseCheck.productCheck + 1;
     databaseCheck.productCheck = productCheck;
     return this.databaseCheckRepository.save(databaseCheck);
