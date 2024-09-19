@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, Length } from 'class-validator';
 import { CTable } from 'src/models/entities/cTable.entity';
 import { EnumTableStatus } from 'src/models/enums/enumTableStatus';
 
@@ -15,7 +15,6 @@ export class TableUpdateDTO {
   name: string;
 
   @Expose()
-  @IsString()
   status: string;
 
   toTable(): CTable {

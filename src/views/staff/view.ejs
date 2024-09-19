@@ -29,7 +29,7 @@
                                     <img id="imageViewStaff" src="" alt="Hình ảnh nhân viên">
                                 </div>
                                 <div class="user-display-info">
-                                    <div class="name" id="fullNameViewStaff">Lý Thanh Tùng</div>
+                                    <div class="name" id="fullNameViewStaff">Hiếu Nguyễn</div>
                                 </div>
                                 <div class="row user-display-details">
                                     <div class="col-4">
@@ -216,7 +216,6 @@
             type: "GET",
             url: page.urls.getStaffById + "/" + staffId
         }).done((data) => {
-            console.log(data)
             page.elements.imageViewStaff.attr("src", data.staffAvatar.fileUrl);
             page.elements.fullNameViewStaff.text(data.fullName);
             page.elements.profileViewStaff.text("Xin chào! Tôi tên là " + data.fullName + " đến từ " + data.locationRegion.provinceName);

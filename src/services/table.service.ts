@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { plainToInstance } from 'class-transformer';
 import { TableDTO } from 'src/models/DTO/table/table.dto';
 import { CTable } from 'src/models/entities/cTable.entity';
 import { EnumTableStatus } from 'src/models/enums/enumTableStatus';
@@ -17,17 +18,22 @@ export class TableService {
   }
 
   async getAllTableWhereDeletedIsFalse(): Promise<TableDTO[]> {
-    return this.tableRepository
-      .createQueryBuilder('tb')
-      .select(['tb.id', 'tb.name', 'tb.status'])
-      .where('tb.deleted = :deleted', { deleted: false })
-      .getRawMany();
+    const tables = await this.tableRepository.find({
+      where: { deleted: false },
+    });
+    return tables.map((table) => {
+      const tableDTO = plainToInstance(TableDTO, table, {
+        excludeExtraneousValues: true,
+      });
+
+      return tableDTO;
+    });
   }
 
   async getTablesWhereStatus(status: EnumTableStatus): Promise<TableDTO[]> {
     return this.tableRepository
       .createQueryBuilder('tb')
-      .select(['tb.id', 'tb.name', 'tb.status'])
+      .select(['id', 'name', 'status'])
       .where('tb.deleted = :deleted', { deleted: false })
       .andWhere('tb.status = :status', { status })
       .getRawMany();

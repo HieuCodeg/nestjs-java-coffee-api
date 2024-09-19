@@ -13,7 +13,6 @@ export class UserDTO {
   @Length(10, 50, { message: 'Độ dài email nằm trong khoảng 10-50 ký tự!' })
   username: string;
 
-  @Expose()
   @IsNotEmpty({ message: 'Vui lòng nhập mật khẩu!' })
   @Length(10, 20, { message: 'Độ dài mật khẩu nằm trong khoảng 10-20 ký tự!' })
   password: string;

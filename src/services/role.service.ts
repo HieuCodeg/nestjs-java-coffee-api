@@ -38,7 +38,7 @@ export class RoleServiceImpl {
   async getAllRoleDTONoCustomer(): Promise<RoleDTO[]> {
     return this.roleRepository
       .createQueryBuilder('ro')
-      .select(['ro.id', 'ro.code'])
+      .select(['id', 'code'])
       .where('ro.code <> :code', { code: 'CUSTOMER' })
       .getRawMany();
   }
@@ -46,7 +46,7 @@ export class RoleServiceImpl {
   async getAllRoleDTONoAdminAndCustomer(): Promise<RoleDTO[]> {
     return this.roleRepository
       .createQueryBuilder('ro')
-      .select(['ro.id', 'ro.code'])
+      .select(['id', 'code'])
       .where('ro.code <> :adminCode', { adminCode: 'ADMIN' })
       .andWhere('ro.code <> :customerCode', { customerCode: 'CUSTOMER' })
       .getRawMany();

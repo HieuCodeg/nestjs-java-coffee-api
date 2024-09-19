@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsOptional,
@@ -57,6 +57,7 @@ export class StaffDTO {
   @Expose()
   @ValidateNested()
   @Type(() => StaffAvatarDTO)
+  @Transform(({ obj }) => obj.avatar)
   staffAvatar: StaffAvatarDTO;
 
   // Convert DTO to entity if needed

@@ -13,6 +13,16 @@ import { StaffCPController } from 'src/controllers/web/staff-cp.controller';
 import { TableCPController } from 'src/controllers/web/table-cp.controller';
 import { CategoryAPIController } from 'src/controllers/api/category-api.controller';
 import { ProductController } from 'src/controllers/api/product-api.controller';
+import { TableController } from 'src/controllers/api/table-api.controller';
+import { StaffController } from 'src/controllers/api/staff-api.controller';
+import { RoleAPI } from 'src/controllers/api/role-api.controller';
+import { UserController } from 'src/controllers/api/user-api.controller';
+import { CashierController } from 'src/controllers/api/cashier-api.controller';
+import { DatabaseCheckController } from 'src/controllers/api/databasecheck-api.controller';
+import { OrderController } from 'src/controllers/api/order-api.controller';
+import { OrderItemController } from 'src/controllers/api/oderItem-api.controller';
+import { OtpController } from 'src/controllers/api/otp-api.controller';
+import { ReportController } from 'src/controllers/api/report-api.controller';
 
 @Module({
   imports: [ServiceModule, UntilModule],
@@ -30,6 +40,16 @@ import { ProductController } from 'src/controllers/api/product-api.controller';
     // api
     CategoryAPIController,
     ProductController,
+    TableController,
+    StaffController,
+    RoleAPI,
+    UserController,
+    CashierController,
+    DatabaseCheckController,
+    OrderController,
+    OrderItemController,
+    OtpController,
+    ReportController,
   ],
 })
 export class ControllerModule {}

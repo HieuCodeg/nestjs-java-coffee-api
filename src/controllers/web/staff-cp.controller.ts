@@ -36,6 +36,19 @@ export class StaffCPController {
     return null;
   }
 
+  @Get('/account-recovery')
+  @Render('staff/recoveryStaff') // Render trang khôi phục tài khoản nhân viên
+  async showListAccountRecoveryPage(@Req() req: Request) {
+    if ('username' in req?.user) {
+      const staffDTO: StaffDTO = await this.staffService.getByUsernameDTO(
+        String(req.user?.username),
+      );
+      return { staff: staffDTO };
+    }
+
+    return null;
+  }
+
   @Get('/:staffId')
   @Render('staff/view') // Render trang xem chi tiết nhân viên
   async showViewPage(@Req() req: Request, @Param('staffId') staffId: number) {
@@ -45,19 +58,6 @@ export class StaffCPController {
       );
       const viewer: Staff = await this.staffService.findById(staffId);
       return { staff: staffDTO, viewer: viewer.toStaffDTO() };
-    }
-
-    return null;
-  }
-
-  @Get('/account-recovery')
-  @Render('staff/recoveryStaff') // Render trang khôi phục tài khoản nhân viên
-  async showListAccountRecoveryPage(@Req() req: Request) {
-    if ('username' in req?.user) {
-      const staffDTO: StaffDTO = await this.staffService.getByUsernameDTO(
-        String(req.user?.username),
-      );
-      return { staff: staffDTO };
     }
 
     return null;

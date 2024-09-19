@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -13,17 +13,21 @@ export class JwtAuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
+    const response = context.switchToHttp().getResponse<Response>();
     const token = this.extractTokenFromRequest(request);
 
     if (!token) {
+      response.redirect('/login');
       throw new UnauthorizedException('Token is missing!');
     }
 
     try {
       const decoded = this.jwtService.verify(token);
+
       request.user = decoded; // Lưu thông tin người dùng vào request
       return true;
     } catch (err) {
+      response.redirect('/login');
       throw new UnauthorizedException('Invalid token!');
     }
   }

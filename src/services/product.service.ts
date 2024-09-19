@@ -69,7 +69,10 @@ export class ProductService {
   }
 
   async findById(id: number): Promise<Product | undefined> {
-    return this.productRepository.findOneBy({ id });
+    return this.productRepository.findOne({
+      where: { id },
+      relations: ['category', 'productImage'], // Liệt kê các quan hệ cần lấy
+    });
   }
 
   async existsByTitle(title: string): Promise<boolean> {
@@ -194,6 +197,6 @@ export class ProductService {
   //   }
 
   async softDelete(productId: number): Promise<void> {
-    await this.productRepository.softDelete(productId);
+    await this.productRepository.update(productId, { deleted: true });
   }
 }
