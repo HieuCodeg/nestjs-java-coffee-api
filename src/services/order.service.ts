@@ -331,10 +331,10 @@ export class OrderService {
 
   async countOrderOfCurrentDay(): Promise<OrderCountCurrentMonthDTO[]> {
     return this.orderRepository
-      .createQueryBuilder('od')
-      .select(['COUNT(od.id) AS orderCount'])
-      .where("DATE(Date_Format(od.createdAt,'%Y/%m/%d')) = CURRENT_DATE()")
-      .getRawMany<OrderCountCurrentMonthDTO>();
+      .createQueryBuilder('order')
+      .select('COUNT(order.id)', 'count')
+      .where('DATE(order.createdAt) = CURDATE()')
+      .getRawMany();
   }
 
   async softDelete(id: number): Promise<void> {

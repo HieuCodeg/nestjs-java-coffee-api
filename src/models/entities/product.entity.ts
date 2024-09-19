@@ -44,10 +44,8 @@ export class Product extends BaseEntity {
       title: this.title,
       description: this.description,
       summary: this.summary,
-      sizes: JsonToMapConverter.convertToDatabaseColumn(this.sizes) as Map<
-        string,
-        SizeDTO
-      >,
+      sizes:
+        typeof this.sizes === 'string' ? JSON.parse(this.sizes) : this.sizes,
       category: this.category.toCategoryDTO(),
       productImage: this.productImage.toProductImageDTO(),
     } as ProductDTO;

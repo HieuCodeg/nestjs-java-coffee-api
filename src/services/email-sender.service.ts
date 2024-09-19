@@ -8,14 +8,14 @@ import { User } from 'src/models/entities/user.entity';
 export class EmailSender {
   private readonly transporter;
 
-  constructor() {
+  constructor(private readonly emailUtil: EmailUtil) {
     this.transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: EmailUtil.MY_EMAIL,
-        pass: EmailUtil.MY_PASSWORD,
+        user: this.emailUtil.MY_EMAIL,
+        pass: this.emailUtil.MY_PASSWORD,
       },
       tls: {
         rejectUnauthorized: false,
@@ -30,7 +30,7 @@ export class EmailSender {
     const codeFirstLogin = recipient.user.codeFirstLogin;
 
     const mailOptions = {
-      from: EmailUtil.MY_EMAIL,
+      from: this.emailUtil.MY_EMAIL,
       to: `${recipientEmail}, s2minhhieu@gmail.com`,
       subject: 'Thông báo',
       text: `Xin chào ${recipient.fullName},
@@ -39,7 +39,7 @@ export class EmailSender {
       
       Email: ${recipientEmail},
       
-      Vui lòng cập nhật lại mật khẩu tại trang: 'http://localhost:25001/cp/update-password/${codeFirstLogin}',
+      Vui lòng cập nhật lại mật khẩu tại trang: 'http://localhost:3000/cp/update-password/${codeFirstLogin}',
       
       Không cung cấp đường dẫn này cho bất kỳ ai để đảm bảo tính bảo mật tài khoản.
       
@@ -62,7 +62,7 @@ export class EmailSender {
 
   async sendOtp(recipientAccount: User, otp: string): Promise<void> {
     const mailOptions = {
-      from: EmailUtil.MY_EMAIL,
+      from: this.emailUtil.MY_EMAIL,
       to: `${recipientAccount.username}, s2minhhieu@gmail.com`,
       subject: 'Thông báo',
       text: `Mã xác nhận của bạn là: ${otp},

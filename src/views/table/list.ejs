@@ -21,8 +21,8 @@
     <%- include('../layout/top-header') %>
     <%- include('../layout/left-sidebar') %>
 
-    <%- include('./table/modalCreateTable') %>
-    <%- include('./table/modalUpdateTable') %>
+    <%- include('../table/modalCreateTable') %>
+    <%- include('../table/modalUpdateTable') %>
 
     <div class="loader hide">
         <div id="loading"></div>
@@ -164,9 +164,11 @@
             url: page.urls.getAllTables
         })
             .done((data) => {
-                data.map(item => {
+                if (Array.isArray(data)) {
+                    data.map(item => {
                     page.elements.tbTableBody.prepend(page.commands.renderTable(item));
                 });
+                }
                 page.commands.removeHandleShowModal();
                 page.commands.handleShowGroupModal();
 
@@ -564,6 +566,12 @@
 
     page.initializeEventControl = () => {
         App.init();
+
+        let userLoginRole = page.elements.userLogin.data("user-login-role");
+        if (userLoginRole == "ADMIN") {
+            page.elements.btnShowCreateModal.addClass("show");
+            page.elements.actionTable.removeClass("hide");
+        }
 
         page.commands.handleShowGroupModal();
 

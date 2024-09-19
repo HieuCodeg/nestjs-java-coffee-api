@@ -7,6 +7,7 @@ import { OrderItem } from 'src/models/entities/orderItem.entity';
 import { EnumOrderItemStatus } from 'src/models/enums/enumOrderItemStatus';
 import { Repository } from 'typeorm';
 import { OrderService } from './order.service';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class OrderItemService {
@@ -591,22 +592,20 @@ export class OrderItemService {
   }
 
   async getTop5Product(): Promise<ReportProductDTO[]> {
-    return this.orderItemRepository
-      .createQueryBuilder('oi')
-      .select([
-        'pd.title',
-        'pd.productImage.fileFolder',
-        'pd.productImage.fileName',
-        'oi.size',
-        'SUM(oi.quantity) as totalQuantity',
-        'SUM(oi.amount) as totalAmount',
-      ])
-      .innerJoin('oi.product', 'pd')
-      .groupBy('oi.product.id')
-      .addGroupBy('oi.size')
-      .orderBy('SUM(oi.quantity)', 'DESC')
-      .limit(5)
-      .getMany();
+    const orderItems = await this.orderItemRepository.find({
+      relations: ['product'],
+      order: {
+        quantity: 'DESC',
+      },
+      take: 5,
+    });
+
+    return orderItems.map((item) => {
+      const reportProductDTO = plainToInstance(ReportProductDTO, item, {
+        excludeExtraneousValues: true,
+      });
+      return reportProductDTO;
+    });
   }
 
   async updateAmount(amount: number, orderItemId: number): Promise<void> {

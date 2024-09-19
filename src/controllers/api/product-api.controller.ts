@@ -1,21 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
-  HttpStatus,
-  HttpException,
-  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { plainToClass } from 'class-transformer';
-import { AppUtils } from 'src/common/app.untils';
 import { JwtAuthGuard } from 'src/config/jwt-auth.guard';
 import { ProductCreateDTO } from 'src/models/DTO/product/productCreate.dto';
 import { ProductUpdateDTO } from 'src/models/DTO/product/productUpdate.dto';
@@ -30,7 +29,6 @@ export class ProductController {
     private readonly productService: ProductService,
     private readonly categoryService: CategoryServiceImpl,
     private readonly databaseCheckService: DatabaseCheckServiceImpl,
-    private readonly appUtils: AppUtils,
   ) {}
 
   @Get()
@@ -54,7 +52,6 @@ export class ProductController {
     }
 
     const product = await this.productService.findById(pid);
-
     if (!product) {
       throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
@@ -177,6 +174,7 @@ export class ProductController {
 
     try {
       await this.productService.softDelete(productId);
+
       await this.databaseCheckService.updateWithProductCheck();
       return { statusCode: HttpStatus.ACCEPTED };
     } catch (error) {

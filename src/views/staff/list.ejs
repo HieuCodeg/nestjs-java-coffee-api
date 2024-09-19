@@ -681,6 +681,12 @@
     page.initializeEventControl = () => {
         App.init();
 
+        let userLoginRole = page.dialogs.elements.userLogin.data("user-login-role");
+        if (userLoginRole == "ADMIN") {
+            page.elements.ShowCreateStaff.addClass("show");
+            page.elements.actionStaff.removeClass("hide");
+        }
+
         page.commands.handleShowGroupModal();
 
         page.dialogs.elements.modalEdit.on("hide.bs.modal", function () {

@@ -1,5 +1,13 @@
-import { Controller, Get, Render, Param, UseGuards, Req } from '@nestjs/common';
-import { Request } from 'express';
+import {
+  Controller,
+  Get,
+  Render,
+  Param,
+  UseGuards,
+  Req,
+  Res,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import { AppUtils } from 'src/common/app.untils';
 import { JwtAuthGuard } from 'src/config/jwt-auth.guard';
 import { StaffDTO } from 'src/models/DTO/staff/staff.dto';
@@ -23,6 +31,7 @@ export class CPController {
       const staffDTO: StaffDTO = await this.staffService.getByUsernameDTO(
         String(req.user?.username),
       );
+
       return { staff: staffDTO };
     }
 
@@ -44,14 +53,27 @@ export class CPController {
   @Get('/update-password/:codeFirstLogin')
   async showUpdatePasswordPage(
     @Param('codeFirstLogin') codeFirstLogin: string,
+    @Res() res: Response,
   ) {
     const user: User =
       await this.userService.findByCodeFirstLogin(codeFirstLogin);
 
     if (user && user.isFirstLogin && !user.deleted) {
-      return { view: 'update-password' };
+      return res.render('update-password');
     }
 
-    return { view: 'error/expired-page' };
+    return res.render('error/expired-page');
+  }
+
+  @Get('/logout')
+  async logout(@Res() res: Response) {
+    // Xóa cookie auth_token
+    res.clearCookie('auth_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    // Điều hướng người dùng về trang đăng nhập
+    return res.redirect('/cp/login');
   }
 }

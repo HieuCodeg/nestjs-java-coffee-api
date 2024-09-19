@@ -472,7 +472,7 @@
             },
             type: "DELETE",
             url: page.urls.deleteProduct + "/" + productId,
-            data: JSON.stringify(productId)
+            data: productId
         })
             .done(() => {
                 $("#tr_" + productId).remove();

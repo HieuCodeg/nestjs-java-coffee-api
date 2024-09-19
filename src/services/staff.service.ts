@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AppUtils } from 'src/common/app.untils';
 import { CloudinaryUploadUtil } from 'src/common/cloudinary.utils';
 import { StaffDTO } from 'src/models/DTO/staff/staff.dto';
 import { StaffCreateDTO } from 'src/models/DTO/staff/staffCreate.dto';
@@ -7,14 +8,13 @@ import { LocationRegion } from 'src/models/entities/location.entity';
 import { Staff } from 'src/models/entities/staff.entity';
 import { StaffAvatar } from 'src/models/entities/staffAvatar.entity';
 import { User } from 'src/models/entities/user.entity';
-import { EnumRole } from 'src/models/enums/enum.role';
 import { EnumFileType } from 'src/models/enums/enumFileType';
 import { DataSource, EntityMetadata, Not, Repository } from 'typeorm';
 import { LocationRegionService } from './location-region.service';
 import { StaffAvatarService } from './staff-avatar.service';
 import { UploadServiceImpl } from './upload.service';
 import { UserService } from './user.service';
-import { AppUtils } from 'src/common/app.untils';
+import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class StaffServiceImpl {
   private readonly DEFAULT_USER_IMAGE_ID = 'default_user_image';
@@ -72,24 +72,21 @@ export class StaffServiceImpl {
   async getAllStaffDTOWhereDeletedIsFalseAndIdNot(
     staffId: number,
   ): Promise<StaffDTO[]> {
-    return this.staffRepository
-      .createQueryBuilder('st')
-      .select([
-        'st.id',
-        'st.fullName',
-        'st.phone',
-        'st.dob',
-        'st.gender',
-        'st.locationRegion',
-        'st.user',
-        'st.avatar',
-      ])
-      .where('st.deleted = :deleted', { deleted: false })
-      .andWhere('st.id <> :staffId', { staffId })
-      .andWhere('st.user.role.code <> :roleCode', {
-        roleCode: EnumRole.ROLE_CUSTOMER,
-      })
-      .getRawMany<StaffDTO>();
+    const staffs = await this.staffRepository.find({
+      where: {
+        deleted: false,
+        id: Not(staffId), // Điều kiện để loại trừ staff với id không bằng staffId
+      },
+      relations: ['locationRegion', 'user', 'user.role', 'avatar'], // Thêm các quan hệ cần thiết
+    });
+
+    return staffs.map((staff) => {
+      // Chuyển đổi entity thành DTO, chỉ giữ lại các trường được định nghĩa trong DTO
+      const staffDTO = plainToInstance(StaffDTO, staff, {
+        excludeExtraneousValues: true, // Chỉ giữ lại các trường được định nghĩa trong DTO
+      });
+      return staffDTO;
+    });
   }
 
   async getByUsernameDTO(username: string): Promise<StaffDTO | null> {
@@ -113,7 +110,10 @@ export class StaffServiceImpl {
   }
 
   async findById(id: number): Promise<Staff | null> {
-    return this.staffRepository.findOne({ where: { id } });
+    return this.staffRepository.findOne({
+      where: { id },
+      relations: ['user', 'user.role', 'avatar', 'locationRegion'], // Liệt kê các quan hệ cần lấy
+    });
   }
 
   async save(staff: Staff): Promise<Staff> {
