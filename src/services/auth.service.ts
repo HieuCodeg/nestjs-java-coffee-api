@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { UserLoginDTO } from 'src/models/DTO/user/userLogin.dto';
 import { UserForgetPasswordDTO } from 'src/models/DTO/user/userForgetPassword.dto';
 import { OtpServiceImpl } from './otp.service';
+import { StaffServiceImpl } from './staff.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly otpService: OtpServiceImpl,
+    private readonly staffService: StaffServiceImpl,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -38,11 +40,14 @@ export class AuthService {
     }
 
     const payload = { username: user.username, sub: user.id };
+    const staff = await this.staffService.getByUsernameDTO(user.username);
+
     return {
-      access_token: this.jwtService.sign(payload),
+      token: this.jwtService.sign(payload),
       userId: user.id,
       username: user.username,
       role: user.role,
+      name: staff.fullName,
     };
   }
 

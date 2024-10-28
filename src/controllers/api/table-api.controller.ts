@@ -38,7 +38,6 @@ export class TableController {
   @Get()
   async getAllByDeletedIsFalse(): Promise<TableDTO[]> {
     const tableDTOS = await this.tableService.getAllTableWhereDeletedIsFalse();
-
     if (tableDTOS.length === 0) {
       throw new HttpException('No content', HttpStatus.NO_CONTENT);
     }
@@ -76,7 +75,7 @@ export class TableController {
       );
 
     if (orderDTOList.length === 0) {
-      throw new HttpException('Bàn chưa có hóa đơn', HttpStatus.NOT_FOUND);
+      throw new HttpException('Bàn chưa có hóa đơn', HttpStatus.NO_CONTENT);
     }
 
     const orderResponseDTO = {

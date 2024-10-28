@@ -1,0 +1,40 @@
+name: CI for NestJS
+
+# Thiết lập sự kiện để kích hoạt pipeline
+on:
+  push:
+    branches:
+      - main # Kích hoạt khi có push lên branch main
+  pull_request:
+    branches:
+      - main # Kích hoạt khi có pull request lên branch main
+
+# Định nghĩa các job trong pipeline
+jobs:
+  build:
+    runs-on: ubuntu-latest # Chạy trên môi trường Ubuntu
+
+    strategy:
+      matrix:
+        node-version: [16.x] # Chạy trên Node.js version 16
+
+    steps:
+      - name: Checkout repository # Lấy code từ repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js # Cài đặt Node.js version 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies # Cài đặt các dependencies từ package.json
+        run: npm install
+
+      - name: Lint code # Chạy linter để kiểm tra style code
+        run: npm run lint
+
+      - name: Run unit tests # Chạy các test unit
+        run: npm run test
+
+      - name: Build application # Build ứng dụng để kiểm tra lỗi build
+        run: npm run build

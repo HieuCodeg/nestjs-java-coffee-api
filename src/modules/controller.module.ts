@@ -23,6 +23,7 @@ import { OrderController } from 'src/controllers/api/order-api.controller';
 import { OrderItemController } from 'src/controllers/api/oderItem-api.controller';
 import { OtpController } from 'src/controllers/api/otp-api.controller';
 import { ReportController } from 'src/controllers/api/report-api.controller';
+import { HandleErrorController } from 'src/controllers/web/handle-error.controller';
 
 @Module({
   imports: [ServiceModule, UntilModule],
@@ -37,6 +38,7 @@ import { ReportController } from 'src/controllers/api/report-api.controller';
     ReportCPController,
     StaffCPController,
     TableCPController,
+    HandleErrorController,
     // api
     CategoryAPIController,
     ProductController,

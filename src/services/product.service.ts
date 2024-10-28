@@ -50,18 +50,22 @@ export class ProductService {
   async getAllProductCashierDTOWhereDeletedIsFalse(): Promise<
     ProductCashierDTO[]
   > {
-    return this.productRepository
-      .createQueryBuilder('pd')
-      .select([
-        'pd.id',
-        'pd.title',
-        'pd.description',
-        'pd.sizes',
-        'pd.category.id',
-        'pd.productImage.fileUrl',
-      ])
-      .where('pd.deleted = :deleted', { deleted: false })
-      .getRawMany();
+    const products = await this.productRepository.find({
+      where: { deleted: false },
+      relations: ['category', 'productImage'],
+    });
+    return products.map((product) => {
+      const productDTO = plainToInstance(ProductCashierDTO, product, {
+        excludeExtraneousValues: true, // Chỉ giữ lại các trường được định nghĩa trong DTO
+      });
+      // Kiểm tra và parse sizes nếu cần
+      if (typeof product.sizes === 'string') {
+        productDTO.sizes = JSON.parse(product.sizes);
+      } else {
+        productDTO.sizes = product.sizes;
+      }
+      return productDTO;
+    });
   }
 
   async getById(id: number): Promise<Product> {

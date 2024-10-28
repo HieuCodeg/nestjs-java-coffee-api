@@ -6,7 +6,7 @@ import {
   IsNumber,
   ValidateNested,
 } from 'class-validator';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { SizeDTO } from './size.dto';
 
 export class ProductCashierDTO {
@@ -34,11 +34,13 @@ export class ProductCashierDTO {
   @Expose()
   @IsOptional()
   @IsNumber()
+  @Transform(({ obj }) => obj.category.id)
   categoryId?: number;
 
   @Expose()
   @IsOptional()
   @IsString()
+  @Transform(({ obj }) => obj.productImage.fileUrl)
   photo?: string;
 
   constructor(

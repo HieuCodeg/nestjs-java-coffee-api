@@ -1,21 +1,18 @@
 import {
-  Controller,
-  Post,
-  Body,
   BadRequestException,
-  Res,
+  Body,
+  Controller,
   HttpStatus,
+  Post,
+  Res,
   UsePipes,
   ValidationPipe,
-  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AppUtils } from 'src/common/app.untils';
-import { JwtAuthGuard } from 'src/config/jwt-auth.guard';
 import { UserUpdatePasswordDTO } from 'src/models/DTO/user/userUpdatePassword.dto';
 import { UserService } from 'src/services/user.service';
 
-@UseGuards(JwtAuthGuard)
 @Controller('/api/users')
 export class UserController {
   constructor(
@@ -29,6 +26,8 @@ export class UserController {
     @Body() userUpdatePasswordDTO: UserUpdatePasswordDTO,
     @Res() res: Response,
   ) {
+    console.log('da vao day');
+
     const user = await this.userService.findByCodeFirstLogin(
       userUpdatePasswordDTO.codeFirstLogin,
     );

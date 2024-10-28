@@ -14,11 +14,12 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const token = await this.authService.login(userLoginDTO);
-    res.cookie('auth_token', token.access_token, {
+    res.cookie('auth_token', token.token, {
       httpOnly: true, // Ngăn chặn truy cập từ client-side
       secure: process.env.NODE_ENV === 'production', // Chỉ dùng với HTTPS khi ở production
-      maxAge: 36000000000, // Thời gian sống của cookie
+      maxAge: 30 * 24 * 60 * 60 * 1000, // Thời gian sống của cookie
     });
+
     return token;
   }
 
