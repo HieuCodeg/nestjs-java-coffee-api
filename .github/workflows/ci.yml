@@ -4,10 +4,10 @@ name: CI for NestJS
 on:
   push:
     branches:
-      - main # Kích hoạt khi có push lên branch main
+      - develop # Kích hoạt khi có push lên branch main
   pull_request:
     branches:
-      - main # Kích hoạt khi có pull request lên branch main
+      - develop # Kích hoạt khi có pull request lên branch main
 
 # Định nghĩa các job trong pipeline
 jobs:
